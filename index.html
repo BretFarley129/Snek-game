@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Snake</title>
+    <style>
+        body{
+            padding: 0px;
+            margin: 0px;
+            background-color: black
+        }
+        div#screen{
+            vertical-align: top;
+            max-width: 60%;
+            display: inline-block;
+        }
+        div.row div{
+            display:inline-block;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.wall{
+            width: 40px;
+            height: 40px;
+            background-color: blue;
+        }
+        div.space{
+            width: 40px;
+            height: 40px;
+            background-color: purple;
+        }
+        div#score{
+            height: 100px;
+            width: 200px;
+            background-color: white;
+            box-sizing: border-box;
+            padding-left: 90px;
+            padding-top: 30px;
+            border: 2px solid blue;
+            margin: 25px;
+            display: inline-block;
+        }
+        div.head{
+            width: 40px;
+            height: 40px;
+            background-color: red;
+        }
+        div.tail{
+            width: 40px;
+            height: 40px;
+            background-color: green;
+        }
+        div.food{
+            width: 40px;
+            height: 40px;
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+    <div id="screen">
+    </div>    
+    <div id="score">
+    </div>
+    <script>
+        var screen = [
+            [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,"H",0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+            [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+        ]
+        var place = [5,8];
+        var tail = 0;
+        function locate(){
+            for (var i = 0; i < screen.length; i ++){
+                for (var j = 0; j < screen[i].length; j++){
+                    if (screen[i][j] == "H"){
+                        console.log(`Y: ${i}\nX: ${j}`);
+                        place = {y:i, x: j};
+                    }
+                    else if(screen[i][j] > 0){
+                        screen[i][j] -= 1;
+                        console.log(screen[i][j])
+                    }
+                }
+            } 
+        }
+        function generateFood(){
+            var cont = true;
+            while (cont){
+                X = Math.floor(Math.random() * 15) + 1;
+                Y = Math.floor(Math.random() * 12) + 1;
+                if (screen[Y][X] == 0){
+                    screen[Y][X] = "F";
+                    cont = false;
+                }
+            }
+        }
+        function addTail(){
+            tail ++;
+            for (var i = 0; i < screen.length; i ++){
+                for (var j = 0; j < screen[i].length; j++){
+                    if(screen[i][j] > 0){
+                        screen[i][j] += 1;
+                    }
+                }
+            } 
+        }
+        function showScreen(){
+            output = '';
+            for( var i = 0; i < screen.length; i++){
+                output += '\n<div class="row">\n';
+                for ( var j = 0; j < screen[i].length; j++){
+                    if(screen[i][j] == -1){
+                        output += '\n<div class="wall"></div>';
+                    }
+                    else if(screen[i][j] == 0){
+                        output += '\n<div class="space"></div>';
+                    }
+                    else if(screen[i][j] > 0){
+                        output += '\n<div class="tail"></div>';
+                    }
+                    else if(screen[i][j] == "H"){
+                        output += '\n<div class="head"></div>';
+                    }
+                    else if(screen[i][j] == "F"){
+                        output += '\n<div class="food"></div>';
+                    }
+                }
+                output += '\n</div>';
+            }
+            locate();
+            
+            
+            document.getElementById('screen').innerHTML = output;
+            document.getElementById('score').innerHTML = tail;
+            console.log(tail)
+        }
+        document.onkeydown = function(e){
+            if(e.keyCode == 37){
+                console.log(screen[place['y']][place['x']-1]);
+                if( screen[place['y']][place['x']-1] == 0){
+                    screen[place['y']][place['x']] = tail
+                    screen[place['y']][place['x']-1] = "H"
+                }
+                else if( screen[place['y']][place['x']-1] == "F"){
+                    screen[place['y']][place['x']] = tail
+                    screen[place['y']][place['x']-1] = "H"
+                    addTail();
+                    generateFood();
+                }
+                else{
+                    alert(`YOU GET NOTHING! YOU LOSE! \nYour Score: ${tail}`);
+                    tail = 0;
+                    screen = [
+                        [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,"H",0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                    ]
+                    generateFood();
+                }
+            }
+            else if(e.keyCode == 38){
+                console.log(screen[place['y']-1][place['x']])
+                if( screen[place['y']-1][place['x']] == 0){
+                    screen[place['y']][place['x']] = tail
+                    screen[place['y']-1][place['x']] = "H"
+                }
+                else if( screen[place['y']-1][place['x']] == "F"){
+                    screen[place['y']][place['x']] = tail
+                    screen[place['y']-1][place['x']] = "H"
+                    addTail();
+                    generateFood();
+                }
+                else{
+                    alert(`YOU GET NOTHING! YOU LOSE! \nYour Score: ${tail}`);
+                    tail = 0;
+                    screen = [
+                        [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,"H",0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                    ]
+                    generateFood();
+                }
+            }
+            else if(e.keyCode == 39){
+                console.log(screen[place['y']][place['x']+1])
+                if( screen[place['y']][place['x']+1] == 0){
+                    screen[place['y']][place['x']] = tail
+                    screen[place['y']][place['x']+1] = "H"
+                }
+                else if( screen[place['y']][place['x']+1] == "F"){
+                    screen[place['y']][place['x']] = tail
+                    screen[place['y']][place['x']+1] = "H"
+                    addTail();
+                    generateFood();
+                }
+                else{
+                    alert(`YOU GET NOTHING! YOU LOSE! \nYour Score: ${tail}`);
+                    tail = 0;
+                    screen = [
+                        [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,"H",0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                    ]
+                    generateFood();
+                }
+            }
+            else if(e.keyCode == 40){
+                console.log(screen[place['y']+1][place['x']])
+                if( screen[place['y']+1][place['x']] == 0){
+                    screen[place['y']][place['x']] = tail
+                    screen[place['y']+1][place['x']] = "H"
+                }
+                else if( screen[place['y']+1][place['x']] == "F"){
+                    screen[place['y']][place['x']] = tail
+                    screen[place['y']+1][place['x']] = "H"
+                    addTail();
+                    generateFood();
+                }
+                else{
+                    alert(`YOU GET NOTHING! YOU LOSE! \nYour Score: ${tail}`);
+                    tail = 0;
+                    screen = [
+                        [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,"H",0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,-1],
+                        [-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1],
+                    ]
+                    generateFood();
+                }
+            }
+            showScreen();
+        }
+        generateFood();
+        showScreen();
+    </script>
+</body>
+</html>
