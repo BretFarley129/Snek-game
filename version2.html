@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: black;
+        }
+        div.row div{
+            display: inline-block;
+            margin: 0px;
+            padding: 0px;
+        }
+        div.wall{
+            width: 40px;
+            height: 40px;
+            background-color: blue;
+        }
+        div.empty{
+            width: 40px;
+            height: 40px;
+            background-color: purple;
+        }
+        div.front{
+            width: 40px;
+            height: 40px;
+            background-color: red;
+        }
+        div.tail{
+            width: 40px;
+            height: 40px;
+            background-color: green;
+        }
+        div.food{
+            width: 40px;
+            height: 40px;
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div id="world">
+    </div>
+    <script>
+        var world = [
+            ["W","W","W","W","W","W","W","W","W","W","W","W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,"H",0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W","W","W","W","W","W","W","W","W","W","W","W"]
+        ]
+        var place;
+        var direction = 0;
+        var tail = 0;
+        function locate(){
+            for (var i = 0; i < world.length; i++){
+                for (var j = 0; j < world.length; j++){
+                    if (world[i][j] == "H"){
+                        place = {'x': j, 'y': i }
+                    }
+                }
+            }
+            console.log(place)
+        }
+        function placeFood(){
+            var cont = true;
+            while(cont){
+                var Y = Math.floor(Math.random()*10+1)
+                var X = Math.floor(Math.random()*10+1)
+                if (world[Y][X] == 0){
+                    world[Y][X] = "F";
+                    cont = false;
+                }
+            }
+        }
+        function displayWorld(){
+            var output = '';
+            for (var i = 0; i < world.length; i++){
+                output += '<div class="row">\n'
+                for (var j = 0; j < world.length; j++){
+                    if (world[i][j] == "W"){
+                        output+= '<div class="wall"></div>\n'
+                    }
+                    else if (world[i][j] == 0){
+                        output+= '<div class="empty"></div>\n'
+                    }
+                    else if (world[i][j] > 0){
+                        output+= '<div class="tail"></div>\n'
+                    }
+                    else if (world[i][j] == "H"){
+                        output+= '<div class="front"></div>\n'
+                    }
+                    else if (world[i][j] == "F"){
+                        output+= '<div class="food"></div>\n'
+                    }
+                }
+                output += '</div>\n'
+            }
+            document.getElementById('world').innerHTML = output;
+            for (var i = 0; i < world.length; i++){
+                for (var j = 0; j < world.length; j++){
+                    if (world[i][j] > 0 ){
+                        world[i][j] --
+                    }
+                }
+            }
+        }
+        locate();
+        placeFood();
+        displayWorld();
+        var thing = setInterval(move, 100);
+        function move(){
+            if (direction == 37){
+                if(world[place['y']][place['x'] - 1] == 0){
+                    world[place['y']][place['x'] - 1] = "H"
+                    world[place['y']][place['x']] = 0
+                }
+                else if(world[place['y']][place['x'] - 1] == "F"){
+                    world[place['y']][place['x'] - 1] = "H"
+                    world[place['y']][place['x']] = 0
+                    tail += 1
+                    placeFood();
+                }
+                else{
+                    alert(`YOU LOSE\nScore: ${tail*100}`)
+                }
+                world[place['y']][place['x']] = tail
+                place['x'] -= 1
+            }
+            else if (direction == 38){
+                if(world[place['y']-1][place['x']] == 0){
+                    world[place['y']-1][place['x']] = "H"
+                    world[place['y']][place['x']] = 0
+                }
+                else if(world[place['y']-1][place['x']] == "F"){
+                    world[place['y']-1][place['x']] = "H"
+                    world[place['y']][place['x']] = 0
+                    tail += 1
+                    placeFood();
+                }
+                else{
+                    alert(`YOU LOSE\nScore: ${tail*100}`)
+                }
+                world[place['y']][place['x']] = tail
+                place['y'] -=1
+
+            }
+            else if (direction == 39){
+                if(world[place['y']][place['x'] + 1] == 0){
+                    world[place['y']][place['x'] + 1] = "H"
+                    world[place['y']][place['x']] = 0
+                }
+                else if(world[place['y']][place['x'] + 1] == "F"){
+                    world[place['y']][place['x'] + 1] = "H"
+                    world[place['y']][place['x']] = 0
+                    tail += 1
+                    placeFood()
+                }
+                else{
+                    alert(`YOU LOSE\nScore: ${tail*100}`)
+                }
+                world[place['y']][place['x']] = tail
+                place['x'] += 1
+            }
+            else if (direction == 40){
+                if(world[place['y']+1][place['x']] == 0){
+                    world[place['y']+1][place['x']] = "H"
+                    world[place['y']][place['x']] = 0
+                }
+                else if(world[place['y']+1][place['x']] == "F"){
+                    world[place['y']+1][place['x']] = "H"
+                    world[place['y']][place['x']] = 0
+                    tail += 1
+                    placeFood()
+                }
+                else{
+                    alert(`YOU LOSE\nScore: ${tail*100}`)
+                }
+                world[place['y']][place['x']] = tail
+                place['y'] += 1
+            }
+            console.log(tail)
+            displayWorld();
+        }
+        document.onkeydown = function(e){
+            if (e.keyCode == 37){
+                direction = 37
+        }
+            else if (e.keyCode == 38){
+                direction = 38
+            }
+            else if (e.keyCode == 39){
+                direction = 39
+            }
+            else if (e.keyCode == 40){
+                direction = 40
+            }
+        }
+    </script>
+</body>
+</html>

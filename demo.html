@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <style>
+        body{
+            background-color: black;
+        }
+        div.row div{
+            display: inline-block;
+            height: 40px;
+            width:40px;
+        }
+        div.wall{
+            background-color: blue;
+        }
+        div.empty{
+            background-color: purple;
+        }
+        div.head{
+            background-color: red;
+        }
+        div.tail{
+            background-color: green;
+        }
+        div.food{
+            background-color: pink;
+        }
+    </style>
+</head>
+<body>
+    <div id="world">
+    </div>
+    <script>
+        var world = [
+            ["W","W","W","W","W","W","W","W","W","W","W","W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,"H",0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+            ["W","W","W","W","W","W","W","W","W","W","W","W"]
+        ];
+        var tail =0;
+        var direction = 0;
+        var place = {'y':4, 'x':4};
+        function generateFood(){
+            var cont = true;
+            while(cont){
+                Y = Math.floor(Math.random()*10)+1
+                X = Math.floor(Math.random()*10)+1
+                if (world[Y][X] == 0){
+                    world[Y][X] = "F"
+                    cont = false;
+                }
+            }
+        }
+        function displayWorld(){
+            var output = '';
+            for(var i = 0; i < world.length; i++){
+                output += '<div class="row">\n';
+                for(var j = 0; j < world[i].length; j++){
+                    if (world[i][j] == "W"){
+                        output += '<div class="wall"></div>\n';
+                    }
+                    else if (world[i][j] == "F"){
+                        output += '<div class="food"></div>\n';
+                    }
+                    else if (world[i][j] == "H"){
+                        output += '<div class="head"></div>\n';
+                    }
+                    else if (world[i][j] == 0){
+                        output += '<div class="empty"></div>\n';
+                    }
+                    else if (world[i][j] > 0){
+                        output += '<div class="tail"></div>\n';
+                        world[i][j] --;
+                    }
+                }
+                output += '</div>';
+            }
+            document.getElementById('world').innerHTML = output
+        }
+        var thing = setInterval(move, 120);
+        function move(){
+            if (direction == 37){
+                if(world[place['y']][place['x'] -1 ] == 0){
+                    world[place['y']][place['x'] -1 ] = "H";
+                    world[place['y']][place['x']] = tail;
+                    place['x'] --;
+                }
+                else if(world[place['y']][place['x'] -1 ] == "F"){
+                    world[place['y']][place['x'] -1 ] = "H";
+                    world[place['y']][place['x']] = tail;
+                    tail ++;
+                    place['x'] --;
+                    generateFood();
+                }
+                else{
+                    alert(`HAHAHA\nScore: ${tail*100}`)
+                     world = [
+                        ["W","W","W","W","W","W","W","W","W","W","W","W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,"H",0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W","W","W","W","W","W","W","W","W","W","W","W"]
+                    ];
+                    generateFood();
+                    tail = 0;
+                    direction = 0;
+                    place = {'y': 4, 'x': 4}
+                    displayWorld();
+                }
+                
+
+            }
+            else if (direction == 38){
+                if(world[place['y'] -1 ][place['x'] ] == 0){
+                    world[place['y'] -1 ][place['x']  ] = "H";
+                    world[place['y']][place['x']] = tail;
+                    place['y'] --;
+                }
+                else if(world[place['y'] -1 ][place['x'] ] == "F"){
+                    world[place['y'] -1 ][place['x']  ] = "H";
+                    world[place['y']][place['x']] = tail;
+                    tail ++;
+                    place['y'] --;
+                    generateFood();
+                }
+                else{
+                    alert(`HAHAHA\nScore: ${tail*100}`)
+                     world = [
+                        ["W","W","W","W","W","W","W","W","W","W","W","W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,"H",0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W","W","W","W","W","W","W","W","W","W","W","W"]
+                    ];
+                    generateFood();
+                    tail = 0;
+                    direction = 0;
+                    place = {'y': 4, 'x': 4}
+                    displayWorld();
+                }
+            }
+            else if (direction == 39){
+                if(world[place['y']  ][place['x'] +1 ] == 0){
+                    world[place['y']  ][place['x'] +1 ] = "H";
+                    world[place['y']][place['x']] = tail;
+                    place['x'] ++;
+                }
+                else if(world[place['y']  ][place['x'] +1 ] == "F"){
+                    world[place['y']  ][place['x'] +1 ] = "H";
+                    world[place['y']][place['x']] = tail;
+                    tail ++
+                    place['x'] ++;
+                    generateFood();
+                }
+                else{
+                    alert(`HAHAHA\nScore: ${tail*100}`)
+                     world = [
+                        ["W","W","W","W","W","W","W","W","W","W","W","W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,"H",0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W","W","W","W","W","W","W","W","W","W","W","W"]
+                    ];
+                    generateFood();
+                    tail = 0;
+                    direction = 0;
+                    place = {'y': 4, 'x': 4}
+                    displayWorld();
+                }
+            }
+            else if (direction == 40){
+                if(world[place['y'] +1 ][place['x'] ] == 0){
+                    world[place['y'] +1 ][place['x']  ] = "H";
+                    world[place['y']][place['x']] = tail;
+                    place['y'] ++;
+                }
+                else if(world[place['y'] +1 ][place['x'] ] == "F"){
+                    world[place['y'] +1 ][place['x']  ] = "H";
+                    world[place['y']][place['x']] = tail;
+                    tail ++
+                    place['y'] ++;
+                    generateFood();
+                }
+                else{
+                    alert(`HAHAHA\nScore: ${tail*100}`)
+                     world = [
+                        ["W","W","W","W","W","W","W","W","W","W","W","W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,"H",0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W",0,0,0,0,0,0,0,0,0,0,"W"],
+                        ["W","W","W","W","W","W","W","W","W","W","W","W"]
+                    ];
+                    generateFood();
+                    tail = 0;
+                    direction = 0;
+                    place = {'y': 4, 'x': 4}
+                    displayWorld();
+                }
+            }
+            displayWorld();
+        }
+        document.onkeydown = function(e){
+            if (e.keyCode == 37){
+                direction = 37             
+            }
+            else if (e.keyCode == 38){
+                direction = 38             
+            }
+            else if (e.keyCode == 39){
+                direction = 39             
+            }
+            else if (e.keyCode == 40){
+                direction = 40             
+            }
+            
+        }
+        generateFood();
+        displayWorld();
+    </script>
+</body>
+</html>
